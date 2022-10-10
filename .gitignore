@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/java,maven,firebase,intellij+all
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,maven,firebase,intellij+all
 
+### Firebase Service Account Keys ###
+src/main/resources/service/serviceAccountKey.json
+
 ### Firebase ###
 .idea
 **/node_modules/*
