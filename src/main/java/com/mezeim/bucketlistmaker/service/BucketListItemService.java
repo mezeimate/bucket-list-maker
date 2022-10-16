@@ -18,4 +18,6 @@ public interface BucketListItemService {
 
     ResponseEntity<Object> modifyBucketListItem(String id, ModifyBucketListItemRequestDTO requestDTO) throws ExecutionException, InterruptedException;
 
+    ResponseEntity<Object> getBucketListItem(String id);
+
 }

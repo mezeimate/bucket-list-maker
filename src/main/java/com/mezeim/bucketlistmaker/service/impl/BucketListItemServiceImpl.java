@@ -1,11 +1,21 @@
 package com.mezeim.bucketlistmaker.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.mezeim.bucketlistmaker.common.AuthorizedUtil;
 import com.mezeim.bucketlistmaker.converter.QueryBucketListResponseConverter;
-import com.mezeim.bucketlistmaker.dto.*;
+import com.mezeim.bucketlistmaker.dto.CreateBucketListItemRequestDTO;
+import com.mezeim.bucketlistmaker.dto.DeleteBucketListItemRequestDTO;
+import com.mezeim.bucketlistmaker.dto.JoinBucketListItemRequestDTO;
+import com.mezeim.bucketlistmaker.dto.ModifyBucketListItemRequestDTO;
+import com.mezeim.bucketlistmaker.dto.QueryBucketListRequestDTO;
+import com.mezeim.bucketlistmaker.dto.QueryBucketListResponseDTO;
 import com.mezeim.bucketlistmaker.entity.BucketListItem;
 import com.mezeim.bucketlistmaker.entity.UserBucketListItem;
 import com.mezeim.bucketlistmaker.handler.ResponseHandler;
@@ -18,12 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.sql.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -94,6 +98,11 @@ public class BucketListItemServiceImpl implements BucketListItemService {
         DocumentSnapshot documentSnapshot = apiFuture.get();
         BucketListItem item = documentSnapshot.toObject(BucketListItem.class);
         return ResponseHandler.generateResponse(HttpStatus.OK, item);
+    }
+
+    @Override
+    public ResponseEntity<Object> getBucketListItem(String id) {
+        return null;
     }
 
     private UserBucketListItem userBucketListItemMatch(String userId, String bucketId) {

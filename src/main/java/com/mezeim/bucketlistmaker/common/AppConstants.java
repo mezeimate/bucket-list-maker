@@ -1,7 +1,5 @@
 package com.mezeim.bucketlistmaker.common;
 
-import java.util.Map;
-
 public class AppConstants {
 
     public static final String BUCKET_DOCUMENT = "BUCKET";
@@ -10,6 +8,7 @@ public class AppConstants {
     public static final String INVITE_CODE_CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     public static final String INVITE_CODE = "inviteCode";
     public static final String USER_ID = "userId";
+    public static final String BUCKET_ID = "bucketId";
     public static final String TITLE = "title";
     public static final String DESCRIPTION = "description";
     public static final String READY = "ready";
