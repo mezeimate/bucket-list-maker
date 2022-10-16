@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -25,11 +24,6 @@ public class BucketListItem implements Serializable {
     private boolean ready;
 
     private String inviteCode;
-
-    public BucketListItem() {
-        this.inviteCode = UUID.randomUUID().toString();
-        //this.inviteCode = InviteCodeGenerator.generate();
-    }
 
     @Override
     public String toString() {

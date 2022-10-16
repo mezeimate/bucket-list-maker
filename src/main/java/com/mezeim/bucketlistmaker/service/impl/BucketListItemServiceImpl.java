@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.mezeim.bucketlistmaker.common.AuthorizedUtil;
+import com.mezeim.bucketlistmaker.converter.QueryBucketListResponseConverter;
 import com.mezeim.bucketlistmaker.dto.*;
 import com.mezeim.bucketlistmaker.entity.BucketListItem;
 import com.mezeim.bucketlistmaker.entity.UserBucketListItem;
@@ -18,7 +19,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -31,6 +35,9 @@ public class BucketListItemServiceImpl implements BucketListItemService {
     @Autowired
     private UserBucketRepository userBucketRepository;
 
+    @Autowired
+    private QueryBucketListResponseConverter bucketListResponseConverter;
+
     @Override
     public ResponseEntity<Object> createBucketListItem(CreateBucketListItemRequestDTO requestDTO) {
         String userId = AuthorizedUtil.getUserId(requestDTO.getIdToken());
@@ -38,6 +45,7 @@ public class BucketListItemServiceImpl implements BucketListItemService {
         ModelMapper modelMapper = new ModelMapper();
         BucketListItem bucket = modelMapper.map(requestDTO, BucketListItem.class);
         bucket.setReady(false);
+        bucket.setInviteCode(UUID.randomUUID().toString());
         BucketListItem savedBucketListItem = bucketListItemRepository.save(bucket);
 
         UserBucketListItem userBucketListItem = userBucketListItemMatch(userId, savedBucketListItem.getDocumentId());
@@ -60,9 +68,16 @@ public class BucketListItemServiceImpl implements BucketListItemService {
     @Override
     public ResponseEntity<Object> queryBucketListItems(QueryBucketListRequestDTO queryRequestDTO) throws ExecutionException, InterruptedException {
         String idToken = queryRequestDTO.getIdToken();
-        List<String> ownBucketIds = userBucketRepository.getOwnBucketListItemIds(idToken);
+        String userId = AuthorizedUtil.getUserId(idToken);
+        List<String> ownBucketIds = userBucketRepository.getOwnBucketListItemIds(userId);
         List<BucketListItem> bucketList = bucketListItemRepository.queryBucketListItems(ownBucketIds);
-        return ResponseHandler.generateResponse(HttpStatus.OK, bucketList);
+
+        List<QueryBucketListResponseDTO> response = new ArrayList<>();
+        for (BucketListItem item : bucketList) {
+            response.add(bucketListResponseConverter.convert(item));
+        }
+
+        return ResponseHandler.generateResponse(HttpStatus.OK, response);
     }
 
     @Override
