@@ -1,21 +1,11 @@
 package com.mezeim.bucketlistmaker.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.mezeim.bucketlistmaker.common.AuthorizedUtil;
 import com.mezeim.bucketlistmaker.converter.QueryBucketListResponseConverter;
-import com.mezeim.bucketlistmaker.dto.CreateBucketListItemRequestDTO;
-import com.mezeim.bucketlistmaker.dto.DeleteBucketListItemRequestDTO;
-import com.mezeim.bucketlistmaker.dto.JoinBucketListItemRequestDTO;
-import com.mezeim.bucketlistmaker.dto.ModifyBucketListItemRequestDTO;
-import com.mezeim.bucketlistmaker.dto.QueryBucketListRequestDTO;
-import com.mezeim.bucketlistmaker.dto.QueryBucketListResponseDTO;
+import com.mezeim.bucketlistmaker.dto.*;
 import com.mezeim.bucketlistmaker.entity.BucketListItem;
 import com.mezeim.bucketlistmaker.entity.UserBucketListItem;
 import com.mezeim.bucketlistmaker.handler.ResponseHandler;
@@ -28,6 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -43,7 +38,7 @@ public class BucketListItemServiceImpl implements BucketListItemService {
     private QueryBucketListResponseConverter bucketListResponseConverter;
 
     @Override
-    public ResponseEntity<Object> createBucketListItem(CreateBucketListItemRequestDTO requestDTO) {
+    public ResponseEntity<Object> createBucketListItem(CreateBucketListItemRequestDTO requestDTO) throws ExecutionException, InterruptedException {
         String userId = AuthorizedUtil.getUserId(requestDTO.getIdToken());
 
         ModelMapper modelMapper = new ModelMapper();
@@ -52,8 +47,7 @@ public class BucketListItemServiceImpl implements BucketListItemService {
         bucket.setInviteCode(UUID.randomUUID().toString());
         BucketListItem savedBucketListItem = bucketListItemRepository.save(bucket);
 
-        UserBucketListItem userBucketListItem = userBucketListItemMatch(userId, savedBucketListItem.getDocumentId());
-        userBucketRepository.save(userBucketListItem);
+        userBucketListItemMatch(userId, savedBucketListItem.getDocumentId());
         return ResponseHandler.generateResponse(HttpStatus.OK, bucket);
     }
 
@@ -64,8 +58,7 @@ public class BucketListItemServiceImpl implements BucketListItemService {
         String inviteCode = joinBucketListItemRequestDTO.getInviteCode();
         String bucketId = bucketListItemRepository.findBucketListItemIdByInviteCode(inviteCode);
 
-        UserBucketListItem userBucketListItem = userBucketListItemMatch(userId, bucketId);
-        userBucketRepository.save(userBucketListItem);
+        userBucketListItemMatch(userId, bucketId);
         return ResponseHandler.generateResponse(HttpStatus.OK);
     }
 
@@ -101,16 +94,18 @@ public class BucketListItemServiceImpl implements BucketListItemService {
     }
 
     @Override
-    public ResponseEntity<Object> getBucketListItem(String id) {
-        return null;
+    public ResponseEntity<Object> getBucketListItem(String id, GetBucketListItemRequestDTO requestDTO) throws ExecutionException, InterruptedException {
+        AuthorizedUtil.getUserId(requestDTO.getIdToken());
+        BucketListItem bucketListItem = bucketListItemRepository.findById(id);
+        return ResponseHandler.generateResponse(HttpStatus.OK, bucketListItem);
     }
 
-    private UserBucketListItem userBucketListItemMatch(String userId, String bucketId) {
-        //TODO ha még nem létezik ilyen kapcsolat csak akkor hajtódjon végre
-        UserBucketListItem userBucketListItem = new UserBucketListItem();
-        userBucketListItem.setBucketId(bucketId);
-        userBucketListItem.setUserId(userId);
-        return userBucketListItem;
+    private void userBucketListItemMatch(String userId, String bucketId) throws ExecutionException, InterruptedException {
+        if (!bucketListItemRepository.hasBucketListItem(bucketId, userId)) {
+            UserBucketListItem userBucketListItem = new UserBucketListItem();
+            userBucketListItem.setBucketId(bucketId);
+            userBucketListItem.setUserId(userId);
+            userBucketRepository.save(userBucketListItem);
+        }
     }
-
 }

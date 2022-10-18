@@ -29,6 +29,20 @@ public class BucketListItemRepository {
         return documents.get(0).toObject(BucketListItem.class).getDocumentId();
     }
 
+    public BucketListItem findById(String id) throws ExecutionException, InterruptedException {
+        CollectionReference buckets = getBucketCollectionReference();
+        Query query = buckets.whereEqualTo(AppConstants.BUCKET_ID, id);
+        List<QueryDocumentSnapshot> documents = getSnapshots(query);
+        return documents.get(0).toObject(BucketListItem.class);
+    }
+
+    public boolean hasBucketListItem(String itemId, String userId) throws ExecutionException, InterruptedException {
+        CollectionReference buckets = getBucketUserCollectionReference();
+        Query query = buckets.whereEqualTo(AppConstants.BUCKET_ID, itemId).whereEqualTo(AppConstants.USER_ID, userId);
+        List<QueryDocumentSnapshot> documents = getSnapshots(query);
+        return !documents.isEmpty();
+    }
+
     public List<BucketListItem> queryBucketListItems(List<String> ownBucketIds) throws ExecutionException, InterruptedException {
         Firestore firestore = FirestoreClient.getFirestore();
         CollectionReference buckets = firestore.collection(AppConstants.BUCKET_DOCUMENT);
@@ -38,16 +52,6 @@ public class BucketListItemRepository {
 
         return documents.stream().map(d -> d.toObject(BucketListItem.class))
                 .filter(b -> ownBucketIds.contains(b.getDocumentId())).toList();
-    }
-
-    private List<QueryDocumentSnapshot> getSnapshots(Query query) throws InterruptedException, ExecutionException {
-        ApiFuture<QuerySnapshot> apiFuture = query.get();
-        return apiFuture.get().getDocuments();
-    }
-
-    private CollectionReference getBucketCollectionReference() {
-        Firestore firestore = FirestoreClient.getFirestore();
-        return firestore.collection(AppConstants.BUCKET_DOCUMENT);
     }
 
     public void delete(String bucketListItemId) {
@@ -62,5 +66,20 @@ public class BucketListItemRepository {
         addedDocRef.update(AppConstants.DESCRIPTION, requestDTO.getDescription());
         addedDocRef.update(AppConstants.READY, requestDTO.isReady());
         return addedDocRef;
+    }
+
+    private List<QueryDocumentSnapshot> getSnapshots(Query query) throws InterruptedException, ExecutionException {
+        ApiFuture<QuerySnapshot> apiFuture = query.get();
+        return apiFuture.get().getDocuments();
+    }
+
+    private CollectionReference getBucketCollectionReference() {
+        Firestore firestore = FirestoreClient.getFirestore();
+        return firestore.collection(AppConstants.BUCKET_DOCUMENT);
+    }
+
+    private CollectionReference getBucketUserCollectionReference() {
+        Firestore firestore = FirestoreClient.getFirestore();
+        return firestore.collection(AppConstants.USER_BUCKET_DOCUMENT);
     }
 }
