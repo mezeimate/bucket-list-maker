@@ -13,6 +13,7 @@ import com.mezeim.bucketlistmaker.dto.JoinBucketListItemRequestDTO;
 import com.mezeim.bucketlistmaker.dto.ModifyBucketListItemRequestDTO;
 import com.mezeim.bucketlistmaker.dto.QueryBucketListRequestDTO;
 import com.mezeim.bucketlistmaker.service.BucketListItemService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin
+@Tag(name = "BucketListItem interfaces")
 @RequestMapping(produces = BucketListPath.BASE_PATH)
 public class BucketListItemRestController {
 
