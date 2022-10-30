@@ -1,18 +1,31 @@
 package com.mezeim.bucketlistmaker.rest;
 
+import java.util.concurrent.ExecutionException;
+
+import javax.validation.Valid;
+
 import com.google.firebase.auth.FirebaseAuthException;
 import com.mezeim.bucketlistmaker.common.BucketListPath;
-import com.mezeim.bucketlistmaker.dto.*;
+import com.mezeim.bucketlistmaker.dto.CreateBucketListItemRequestDTO;
+import com.mezeim.bucketlistmaker.dto.DeleteBucketListItemRequestDTO;
+import com.mezeim.bucketlistmaker.dto.GetBucketListItemRequestDTO;
+import com.mezeim.bucketlistmaker.dto.JoinBucketListItemRequestDTO;
+import com.mezeim.bucketlistmaker.dto.ModifyBucketListItemRequestDTO;
+import com.mezeim.bucketlistmaker.dto.QueryBucketListRequestDTO;
 import com.mezeim.bucketlistmaker.service.BucketListItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.util.concurrent.ExecutionException;
-
-@Controller
+@RestController
 @CrossOrigin
 @RequestMapping(produces = BucketListPath.BASE_PATH)
 public class BucketListItemRestController {
