@@ -1,9 +1,11 @@
 package com.mezeim.bucketlistmaker.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.cloud.StorageClient;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.mezeim.bucketlistmaker.BucketListMakerApplication;
@@ -40,6 +42,12 @@ public class FirebaseConfig {
 
     @Bean
     @DependsOn(value = "createFireBaseApp")
+    public Firestore createFirestoreClient() {
+        return FirestoreClient.getFirestore();
+    }
+
+    @Bean
+    @DependsOn(value = "createFireBaseApp")
     public StorageClient createFirebaseStorage() {
         return StorageClient.getInstance();
     }
@@ -49,12 +57,6 @@ public class FirebaseConfig {
     public FirebaseAuth createFirebaseAuth() {
         return FirebaseAuth.getInstance();
     }
-
-//    @Bean
-//    @DependsOn(value = "createFireBaseApp")
-//    public FirebaseDatabase createFirebaseDatabase() {
-//        return FirebaseDatabase.getInstance();
-//    }
 
     @Bean
     @DependsOn(value = "createFireBaseApp")

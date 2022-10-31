@@ -1,6 +1,5 @@
 package com.mezeim.bucketlistmaker.dto;
 
-import com.mezeim.bucketlistmaker.common.dto.AbstractIdentifierDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +8,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class ModifyBucketListItemRequestDTO extends AbstractIdentifierDTO {
+public class ModifyBucketListItemRequestDTO {
 
     @Size(max = 50)
     @NotNull
@@ -18,5 +17,5 @@ public class ModifyBucketListItemRequestDTO extends AbstractIdentifierDTO {
     @Size(max = 200)
     private String description;
 
-    private boolean ready;
+    private boolean complete;
 }

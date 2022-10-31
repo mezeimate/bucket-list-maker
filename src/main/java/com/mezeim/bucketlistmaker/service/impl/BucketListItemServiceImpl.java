@@ -38,8 +38,8 @@ public class BucketListItemServiceImpl implements BucketListItemService {
     private QueryBucketListResponseConverter bucketListResponseConverter;
 
     @Override
-    public ResponseEntity<Object> createBucketListItem(CreateBucketListItemRequestDTO requestDTO) throws ExecutionException, InterruptedException {
-        String userId = AuthorizedUtil.getUserId(requestDTO.getIdToken());
+    public ResponseEntity<BucketListItem> createBucketListItem(String idToken, CreateBucketListItemRequestDTO requestDTO) throws ExecutionException, InterruptedException {
+        String userId = AuthorizedUtil.getUserId(idToken);
 
         ModelMapper modelMapper = new ModelMapper();
         BucketListItem bucket = modelMapper.map(requestDTO, BucketListItem.class);
@@ -48,12 +48,13 @@ public class BucketListItemServiceImpl implements BucketListItemService {
         BucketListItem savedBucketListItem = bucketListItemRepository.save(bucket);
 
         userBucketListItemMatch(userId, savedBucketListItem.getDocumentId());
-        return ResponseHandler.generateResponse(HttpStatus.OK, bucket);
+        log.info("Created {}", bucket);
+
+        return ResponseEntity.status(HttpStatus.OK).body(bucket);
     }
 
     @Override
-    public ResponseEntity<Object> joinBucket(JoinBucketListItemRequestDTO joinBucketListItemRequestDTO) throws ExecutionException, InterruptedException {
-        String idToken = joinBucketListItemRequestDTO.getIdToken();
+    public ResponseEntity<Object> joinBucket(String idToken, JoinBucketListItemRequestDTO joinBucketListItemRequestDTO) throws ExecutionException, InterruptedException {
         String userId = AuthorizedUtil.getUserId(idToken);
         String inviteCode = joinBucketListItemRequestDTO.getInviteCode();
         String bucketId = bucketListItemRepository.findBucketListItemIdByInviteCode(inviteCode);
@@ -63,41 +64,43 @@ public class BucketListItemServiceImpl implements BucketListItemService {
     }
 
     @Override
-    public ResponseEntity<Object> queryBucketListItems(QueryBucketListRequestDTO queryRequestDTO) throws ExecutionException, InterruptedException {
-        String idToken = queryRequestDTO.getIdToken();
+    public ResponseEntity<List<QueryBucketListResponseDTO>> queryBucketListItems(String idToken, QueryBucketListRequestDTO queryRequestDTO) throws ExecutionException, InterruptedException {
         String userId = AuthorizedUtil.getUserId(idToken);
         List<String> ownBucketIds = userBucketRepository.getOwnBucketListItemIds(userId);
         List<BucketListItem> bucketList = bucketListItemRepository.queryBucketListItems(ownBucketIds);
 
+        log.info("Query items by [{}] user.", userId);
         List<QueryBucketListResponseDTO> response = new ArrayList<>();
         for (BucketListItem item : bucketList) {
+            log.info(item.toString());
             response.add(bucketListResponseConverter.convert(item));
         }
-
-        return ResponseHandler.generateResponse(HttpStatus.OK, response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @Override
-    public ResponseEntity<Object> deleteBucketListItem(DeleteBucketListItemRequestDTO request) {
-        AuthorizedUtil.getUserId(request.getIdToken());
-        bucketListItemRepository.delete(request.getBucketListItemId());
+    public ResponseEntity<Object> deleteBucketListItem(String id, String idToken) {
+        AuthorizedUtil.getUserId(idToken);
+        bucketListItemRepository.delete(id);
+        log.info("Deleted [{}] bucketListItem.", id);
         return ResponseHandler.generateResponse(HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Object> modifyBucketListItem(String id, ModifyBucketListItemRequestDTO requestDTO) throws ExecutionException, InterruptedException {
-        DocumentReference documentReference = bucketListItemRepository.modify(requestDTO, id);
+    public ResponseEntity<BucketListItem> modifyBucketListItem(String id, String idToken, ModifyBucketListItemRequestDTO requestDTO) throws ExecutionException, InterruptedException {
+        AuthorizedUtil.getUserId(idToken);
+        DocumentReference documentReference = bucketListItemRepository.modify(id, requestDTO);
         ApiFuture<DocumentSnapshot> apiFuture = documentReference.get();
         DocumentSnapshot documentSnapshot = apiFuture.get();
         BucketListItem item = documentSnapshot.toObject(BucketListItem.class);
-        return ResponseHandler.generateResponse(HttpStatus.OK, item);
+        return ResponseEntity.status(HttpStatus.OK).body(item);
     }
 
     @Override
-    public ResponseEntity<Object> getBucketListItem(String id, GetBucketListItemRequestDTO requestDTO) throws ExecutionException, InterruptedException {
-        AuthorizedUtil.getUserId(requestDTO.getIdToken());
+    public ResponseEntity<BucketListItem> getBucketListItem(String id, String sessionIdToken) throws ExecutionException, InterruptedException {
+        AuthorizedUtil.getUserId(sessionIdToken);
         BucketListItem bucketListItem = bucketListItemRepository.findById(id);
-        return ResponseHandler.generateResponse(HttpStatus.OK, bucketListItem);
+        return ResponseEntity.status(HttpStatus.OK).body(bucketListItem);
     }
 
     private void userBucketListItemMatch(String userId, String bucketId) throws ExecutionException, InterruptedException {
@@ -106,6 +109,7 @@ public class BucketListItemServiceImpl implements BucketListItemService {
             userBucketListItem.setBucketId(bucketId);
             userBucketListItem.setUserId(userId);
             userBucketRepository.save(userBucketListItem);
+            log.info("Created BucketListItem [{}] - User [{}] join.", bucketId, userId);
         }
     }
 }
