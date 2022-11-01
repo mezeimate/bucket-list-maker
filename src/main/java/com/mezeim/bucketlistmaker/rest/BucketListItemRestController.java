@@ -50,7 +50,7 @@ public class BucketListItemRestController {
     }
 
     @ResponseBody
-    @PutMapping(value = BucketListPath.MODIFY_BUCKET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = BucketListPath.MODIFY_BUCKET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<BucketListItem> modifyBucketListItem(@PathVariable String id, @RequestHeader(value = AppConstants.REQUEST_HEADER_TOKEN) String idToken, @Valid @RequestBody ModifyBucketListItemRequestDTO requestDTO) throws ExecutionException, InterruptedException {
         return bucketListItemService.modifyBucketListItem(id, idToken, requestDTO);
     }
