@@ -43,7 +43,7 @@ public class BucketListItemServiceImpl implements BucketListItemService {
 
         ModelMapper modelMapper = new ModelMapper();
         BucketListItem bucket = modelMapper.map(requestDTO, BucketListItem.class);
-        bucket.setReady(false);
+        bucket.setComplete(false);
         bucket.setInviteCode(UUID.randomUUID().toString());
         BucketListItem savedBucketListItem = bucketListItemRepository.save(bucket);
 

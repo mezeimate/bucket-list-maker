@@ -24,7 +24,7 @@
         <spring-boot-autoconfigure.version>2.7.5</spring-boot-autoconfigure.version>
         <proto-google-cloud-firestore-v1.version>3.7.0</proto-google-cloud-firestore-v1.version>
         <spring-test.version>5.3.23</spring-test.version>
-        <springdoc-openapi-ui.version>1.6.11</springdoc-openapi-ui.version>
+        <springdoc-openapi-ui.version>1.6.12</springdoc-openapi-ui.version>
     </properties>
 
     <dependencies>

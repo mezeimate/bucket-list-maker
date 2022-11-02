@@ -15,6 +15,6 @@ public class QueryBucketListResponseDTO {
 
     private List<String> members;
 
-    private boolean ready;
+    private boolean complete;
 
 }
