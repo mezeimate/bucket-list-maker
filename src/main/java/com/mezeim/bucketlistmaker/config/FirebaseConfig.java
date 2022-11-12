@@ -14,9 +14,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 
 @Configuration
@@ -28,11 +27,14 @@ public class FirebaseConfig {
     public FirebaseApp createFireBaseApp() throws IOException {
 
         ClassLoader classLoader = BucketListMakerApplication.class.getClassLoader();
-        File file = new File(Objects.requireNonNull(classLoader.getResource("service/serviceAccountKey.json")).getFile());
-
-        FileInputStream serviceAccount = new FileInputStream(file.getAbsolutePath());
+        //File file = new File(Objects.requireNonNull(classLoader.getResource("service/serviceAccountKey.json")).getFile());
+        InputStream resourceAsStream = classLoader.getResourceAsStream("service/serviceAccountKey.json");
+        if (Objects.isNull(resourceAsStream)) {
+            throw new IOException("File not found!");
+        }
+        //FileInputStream serviceAccount = new FileInputStream(file.getAbsolutePath());
         FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .setCredentials(GoogleCredentials.fromStream(resourceAsStream))
                 .build();
 
         log.info("Firebase config initialized");
