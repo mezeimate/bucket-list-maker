@@ -2,7 +2,7 @@
 FROM adoptopenjdk/openjdk17:alpine-jre
 
 # Refer to Maven build -> finalName
-ARG JAR_FILE=target/spring-boot-web.jar
+ARG JAR_FILE=target/bucketListMaker.jar
 
 # cd /opt/app
 WORKDIR /opt/app
