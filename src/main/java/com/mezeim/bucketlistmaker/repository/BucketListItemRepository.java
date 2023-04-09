@@ -59,13 +59,16 @@ public class BucketListItemRepository {
         firestore.collection(AppConstants.BUCKET_DOCUMENT).document(bucketListItemId).delete();
     }
 
-    public DocumentReference modify(ModifyBucketListItemRequestDTO requestDTO, String id) {
+    public BucketListItem modify(ModifyBucketListItemRequestDTO requestDTO, String id) throws ExecutionException, InterruptedException {
         Firestore firestore = FirestoreClient.getFirestore();
         DocumentReference addedDocRef = firestore.collection(AppConstants.BUCKET_DOCUMENT).document(id);
         addedDocRef.update(AppConstants.TITLE, requestDTO.getTitle());
         addedDocRef.update(AppConstants.DESCRIPTION, requestDTO.getDescription());
         addedDocRef.update(AppConstants.READY, requestDTO.isReady());
-        return addedDocRef;
+
+        ApiFuture<DocumentSnapshot> apiFuture = addedDocRef.get();
+        DocumentSnapshot documentSnapshot = apiFuture.get();
+        return documentSnapshot.toObject(BucketListItem.class);
     }
 
     private List<QueryDocumentSnapshot> getSnapshots(Query query) throws InterruptedException, ExecutionException {
