@@ -92,7 +92,7 @@ public class BucketListItemServiceImpl implements BucketListItemService {
     @Override
     public ResponseEntity<BucketListItem> modifyBucketListItem(String id, String idToken, ModifyBucketListItemRequestDTO requestDTO) throws ExecutionException, InterruptedException {
         AuthorizedUtil.getUserId(idToken);
-        return ResponseHandler.generateResponse(HttpStatus.OK, bucketListItemRepository.modify(requestDTO, id));
+        return ResponseEntity.status(HttpStatus.OK).body(bucketListItemRepository.modify(id, requestDTO));
     }
 
     @Override
