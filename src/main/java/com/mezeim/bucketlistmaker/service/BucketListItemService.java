@@ -2,22 +2,26 @@ package com.mezeim.bucketlistmaker.service;
 
 import com.google.firebase.auth.FirebaseAuthException;
 import com.mezeim.bucketlistmaker.dto.*;
+import com.mezeim.bucketlistmaker.entity.BucketListItem;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+@Component
 public interface BucketListItemService {
 
-    ResponseEntity<Object> createBucketListItem(CreateBucketListItemRequestDTO createBucketListItemRequestDTO) throws FirebaseAuthException, ExecutionException, InterruptedException;
+    ResponseEntity<BucketListItem> createBucketListItem(String idToken, CreateBucketListItemRequestDTO createBucketListItemRequestDTO) throws FirebaseAuthException, ExecutionException, InterruptedException;
 
-    ResponseEntity<Object> joinBucket(JoinBucketListItemRequestDTO joinBucketListItemRequestDTO) throws ExecutionException, InterruptedException;
+    ResponseEntity<Object> joinBucket(String idToken, JoinBucketListItemRequestDTO joinBucketListItemRequestDTO) throws ExecutionException, InterruptedException;
 
-    ResponseEntity<Object> queryBucketListItems(QueryBucketListRequestDTO queryBucketListRequestDTO) throws ExecutionException, InterruptedException;
+    ResponseEntity<List<QueryBucketListResponseDTO>> queryBucketListItems(String idToken, QueryBucketListRequestDTO queryRequestDTO) throws ExecutionException, InterruptedException;
 
-    ResponseEntity<Object> deleteBucketListItem(DeleteBucketListItemRequestDTO request);
+    ResponseEntity<Object> deleteBucketListItem(String id, String idToken);
 
-    ResponseEntity<Object> modifyBucketListItem(String id, ModifyBucketListItemRequestDTO requestDTO) throws ExecutionException, InterruptedException;
+    ResponseEntity<BucketListItem> modifyBucketListItem(String id, String idToken, ModifyBucketListItemRequestDTO requestDTO) throws ExecutionException, InterruptedException;
 
-    ResponseEntity<Object> getBucketListItem(String id, GetBucketListItemRequestDTO requestDTO) throws ExecutionException, InterruptedException;
+    ResponseEntity<BucketListItem> getBucketListItem(String id, String requestDTO) throws ExecutionException, InterruptedException;
 
 }

@@ -21,7 +21,7 @@ public class BucketListItem implements Serializable {
 
     private String description;
 
-    private boolean ready;
+    private boolean complete;
 
     private String inviteCode;
 
@@ -31,7 +31,7 @@ public class BucketListItem implements Serializable {
                 "documentId='" + documentId + '\'' +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", ready=" + ready +
+                ", complete=" + complete +
                 ", inviteCode='" + inviteCode + '\'' +
                 '}';
     }

@@ -18,7 +18,7 @@ public class QueryBucketListResponseConverter {
         QueryBucketListResponseDTO responseDTO = new QueryBucketListResponseDTO();
         responseDTO.setDocumentId(bucketListItem.getDocumentId());
         responseDTO.setMembers(userBucketRepository.getUserNamesByBucketListItem(bucketListItem.getDocumentId()));
-        responseDTO.setReady(bucketListItem.isReady());
+        responseDTO.setComplete(bucketListItem.isComplete());
         responseDTO.setTitle(bucketListItem.getTitle());
         return responseDTO;
     }

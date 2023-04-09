@@ -1,0 +1,13 @@
+version: '3'
+services:
+  product-server:
+    build: ./
+    container_name: bucket-list-prod-server
+    image: bucket-list-server:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - spring-cloud-network
+networks:
+  spring-cloud-network:
+    driver: bridge

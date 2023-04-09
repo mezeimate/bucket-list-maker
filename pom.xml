@@ -19,14 +19,22 @@
     <properties>
         <java.version>17</java.version>
         <maven.version>3.8.5</maven.version>
-        <firebase.version>9.0.0</firebase.version>
+        <firebase.version>9.1.0</firebase.version>
         <modelmapper.version>3.1.0</modelmapper.version>
-        <spring-boot-autoconfigure.version>2.7.4</spring-boot-autoconfigure.version>
-        <proto-google-cloud-firestore-v1.version>3.5.0</proto-google-cloud-firestore-v1.version>
+        <spring-boot-autoconfigure.version>2.7.5</spring-boot-autoconfigure.version>
+        <proto-google-cloud-firestore-v1.version>3.7.0</proto-google-cloud-firestore-v1.version>
         <spring-test.version>5.3.23</spring-test.version>
+        <springdoc-openapi-ui.version>1.6.12</springdoc-openapi-ui.version>
     </properties>
 
     <dependencies>
+
+        <!-- Swagger UI -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc-openapi-ui.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.modelmapper</groupId>
@@ -54,6 +62,8 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+            <version>1.18.24</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -106,6 +116,19 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.mezeim.bucketlistmaker.BucketListMakerApplication</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>
