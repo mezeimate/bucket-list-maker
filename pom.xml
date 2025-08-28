@@ -12,7 +12,7 @@
 
     <groupId>com.mezeim</groupId>
     <artifactId>bucketListMaker</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>bucketListMaker</name>
     <description>bucketListMaker</description>
 
@@ -28,13 +28,6 @@
     </properties>
 
     <dependencies>
-
-        <!-- Swagger UI -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>${springdoc-openapi-ui.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.modelmapper</groupId>

@@ -6,7 +6,6 @@ import com.mezeim.bucketlistmaker.common.bucketListItem.BucketListPath;
 import com.mezeim.bucketlistmaker.dto.*;
 import com.mezeim.bucketlistmaker.entity.BucketListItem;
 import com.mezeim.bucketlistmaker.service.BucketListItemService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @CrossOrigin
-@Tag(name = "BucketListItem interfaces")
 @RequestMapping(produces = BucketListPath.BASE_PATH)
 public class BucketListItemRestController {
 
