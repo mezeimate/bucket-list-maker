@@ -14,8 +14,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Objects;
 
 @Configuration
@@ -23,21 +26,31 @@ import java.util.Objects;
 public class FirebaseConfig {
 
     @Bean
-    @Deprecated
     public FirebaseApp createFireBaseApp() throws IOException {
+        // Környezeti változóból olvassuk a Firebase hitelesítési adatokat
+        String firebaseCredentialsJson = System.getenv("FIREBASE_CREDENTIALS_JSON");
 
-        ClassLoader classLoader = BucketListMakerApplication.class.getClassLoader();
-        //File file = new File(Objects.requireNonNull(classLoader.getResource("service/serviceAccountKey.json")).getFile());
-        InputStream resourceAsStream = classLoader.getResourceAsStream("service/serviceAccountKey.json");
-        if (Objects.isNull(resourceAsStream)) {
-            throw new IOException("File not found!");
+        // Ha nincs meg a sima JSON, próbáljuk meg a Base64-es változatot
+        if (firebaseCredentialsJson == null || firebaseCredentialsJson.trim().isEmpty()) {
+            String base64Credentials = System.getenv("FIREBASE_CREDENTIALS_BASE64");
+            if (base64Credentials != null && !base64Credentials.trim().isEmpty()) {
+                byte[] decodedBytes = Base64.getDecoder().decode(base64Credentials);
+                firebaseCredentialsJson = new String(decodedBytes, StandardCharsets.UTF_8);
+            } else {
+                throw new IOException("Firebase credentials not found in environment variables. " +
+                        "Please set either FIREBASE_CREDENTIALS_JSON or FIREBASE_CREDENTIALS_BASE64");
+            }
         }
-        //FileInputStream serviceAccount = new FileInputStream(file.getAbsolutePath());
+
+        InputStream credentialsStream = new ByteArrayInputStream(
+                firebaseCredentialsJson.getBytes(StandardCharsets.UTF_8)
+        );
+
         FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(resourceAsStream))
+                .setCredentials(GoogleCredentials.fromStream(credentialsStream))
                 .build();
 
-        log.info("Firebase config initialized");
+        log.info("Firebase config initialized from environment variables");
 
         return FirebaseApp.initializeApp(options);
     }
